@@ -1,6 +1,21 @@
 
 public class Walker {
 
+	static int[][] buildMap(char[][] map, char wall){
+		int[][] ret = new int[map.length][map[0].length];
+
+		for (int i = 0; i < map.length; i++){
+			for (int j = 0; j < map[i].length); j++){
+				if (map[i][j] == wall){
+					ret[i][j] = -1;
+				}else {
+					ret[i][j] = 0;
+				}
+			}
+		}
+		return ret;
+	}
+
 	static void doLee(int[][] map, int fromX, int fromY, int toX, int toY, int prev) {
 		if (fromX < 0 || fromX >= map[0].length || fromY >= map.length || fromY < 0) {
 			return;
