@@ -1,12 +1,12 @@
 
 public class Walker {
-	int[][] map;
-	int[][] calcMap;
-	int[][]	enCoords;
-	int		enemyNum;
-	int		whichTurn = 0;
-	int		plX;
-	int		plY;
+	private int[][] map;
+	private int[][] calcMap;
+	private int[][]	enCoords;
+	private int		enemyNum;
+	private int		whichTurn = 0;
+	private int		plX;
+	private int		plY;
 
 	public Walker (int[][] map, int enemyNum){
 		this.map = map;
@@ -87,39 +87,6 @@ public class Walker {
 		return false;
 	}
 
-	void traceBack(int[][] map, int toX, int toY, int fromX, int fromY) {
-		int prev = map[toY][toX];
-		map[toY][toX] = -2;
-		while (toX != fromX || toY != fromY) {
-			if (stepBack(map, toX + 1, toY, prev)) {
-				toX += 1;
-				prev = map[toY][toX];
-				map[toY][toX] = -2;
-				continue;
-			}
-			if (stepBack(map, toX - 1, toY, prev)) {
-				toX -= 1;
-				prev = map[toY][toX];
-				map[toY][toX] = -2;
-				continue;
-			}
-			if (stepBack(map, toX, toY + 1, prev)) {
-				toY += 1;
-				prev = map[toY][toX];
-				map[toY][toX] = -2;
-				continue;
-			}
-			if (stepBack(map, toX, toY - 1, prev)) {
-				toY -= 1;
-				prev = map[toY][toX];
-				map[toY][toX] = -2;
-				continue;
-			}
-			break;
-		}
-		map[toY][toX] = -2;
-	}
-
 	void reverse(int[][] map){
 		for (int i = 0; i < map.length; i++){
 			for (int j = 0; j < map[i].length; j++){
@@ -162,6 +129,67 @@ public class Walker {
 
 	}
 
+	private void checkWin(int x, int y){
+		if (map[y][x] == -3){
+			System.out.println("Ti pobedil!!!!!");
+			System.exit(1);
+		}
+	}
+
+	public int plWalk(char dir){
+		switch (dir){
+			case ('W'):
+				if (check(plX, plY -1 )){
+					checkWin(plX,plY -1);
+					map[plY][plX] = 0;
+					map[plY - 1][plX] = -4;
+					plY -= 1;
+					return 1;
+				}
+				else {
+					return -1;
+				}
+
+			case ('A'):
+				if (check(plX - 1, plY)){
+					checkWin(plX - 1, plY);
+					map[plY][plX] = 0;
+					map[plY][plX - 1] = -4;
+					plX -= 1;
+					return 1;
+				}
+				else {
+					return -1;
+				}
+
+			case ('S'):
+				if (check(plX, plY + 1)){
+					checkWin(plX,plY + 1);
+					map[plY][plX] = 0;
+					map[plY + 1][plX] = -4;
+					plY += 1;
+					return 1;
+				}
+				else {
+					return -1;
+				}
+
+			case ('D'):
+				if (check(plX + 1, plY)){
+					checkWin(plX + 1, plY);
+					map[plY][plX] = 0;
+					map[plY][plX + 1] = -4;
+					plX += 1;
+					return 1;
+				}
+				else {
+					return -1;
+				}
+			default:
+				return -1;
+		}
+	}
+
 	private int tryWalk(int fromX, int fromY, int toX, int toY){
 
 		if (map[toY][toX] == -2){
@@ -188,13 +216,6 @@ public class Walker {
 			return -1;
 		}
 		if (map[toY][toX] == -4){
-			for (int i = 0; i < map.length; i++) {
-				for (int j = 0; j < map[i].length; j++) {
-					System.out.print(map[i][j] + "\t");
-				}
-				System.out.println();
-			}
-			System.out.println();
 			System.out.println("Ti proigral");
 			System.exit(1);
 		}
@@ -203,6 +224,10 @@ public class Walker {
 		enCoords[whichTurn][0] = toX;
 		enCoords[whichTurn][1] = toY;
 		return 1;
+	}
+
+	public int[][] getMap(){
+		return map;
 	}
 
 	public static void main(String[] args) {
@@ -221,6 +246,7 @@ public class Walker {
 		Walker w = new Walker(a, 5);
 		while (true){
 			w.walk();
+			w.plWalk('W');
 		}
 	}
 }
