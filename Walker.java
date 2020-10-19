@@ -3,7 +3,6 @@ public class Walker {
 
 	static void doLee(int[][] map, int fromX, int fromY, int toX, int toY, int prev) {
 		if (fromX < 0 || fromX >= map[0].length || fromY >= map.length || fromY < 0) {
-			//System.out.println(fromX + " " + fromY + " " + toX + " " + toY);
 			return;
 		}
 		if (map[fromY][fromX] == 0 || (prev + 1 < map[fromY][fromX])) {
@@ -31,7 +30,7 @@ public class Walker {
 	static void traceBack(int[][] map, int toX, int toY, int fromX, int fromY) {
 		int prev = map[toY][toX];
 		map[toY][toX] = -2;
-		while (toX != fromX && toY != fromY) {
+		while (toX != fromX || toY != fromY) {
 			if (stepBack(map, toX + 1, toY, prev)) {
 				toX += 1;
 				prev = map[toY][toX];
@@ -58,31 +57,35 @@ public class Walker {
 			}
 			break;
 		}
+		map[toY][toX] = -2;
 	}
 
-	static boolean step(int[][] map, int toX, int toY) {
-		if (toX < 0 || toX >= map[0].length || toY >= map.length || toY < 0) {
-			return false;
+	static void reverse(int[][] map){
+		for (int i = 0; i < map.length; i++){
+			for (int j = 0; j < map[i].length; j++){
+				if(map[i][j] > 0){
+					map[i][j] = 0;
+				}
+			}
 		}
-		if (map[toY][toX] == -2) {
-			return true;
-		}
-		return false;
 	}
 
 	static public int getDir(int[][] map, int fromX, int fromY, int toX, int toY) {
-		doLee(map, fromX, fromY, toX, toY, 0);
-		traceBack(map, toX, toY, fromY, fromX);
-		if (step(map, toX + 1, toY)) {
+		doLee(map, toX, toY, fromX, fromY, 0);
+		if (stepBack(map, fromX + 1, fromY, map[fromY][fromX])) {
+			reverse(map);
 			return 1;
 		}
-		if (step(map, toX - 1, toY)) {
+		if (stepBack(map, fromX - 1, fromY, map[fromY][fromX])) {
+			reverse(map);
 			return 2;
 		}
-		if (step(map, toX, toY + 1)) {
+		if (stepBack(map, fromX, fromY + 1, map[fromY][fromX])) {
+			reverse(map);
 			return 3;
 		}
-		if (step(map, toX, toY - 1)) {
+		if (stepBack(map, fromX, fromY - 1, map[fromY][fromX])) {
+			reverse(map);
 			return 4;
 		}
 		return -1;
@@ -109,6 +112,7 @@ public class Walker {
 			System.out.println();
 		}
 		traceBack(a, 3, 4, 0, 0);
+		reverse(a);
 		System.out.println();
 		for (int i = 0; i < a.length; i++) {
 			for (int j = 0; j < a[i].length; j++) {
